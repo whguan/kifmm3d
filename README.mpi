@@ -1,0 +1,46 @@
+//-----------------------------------------------------
+//-----------------------------------------------------
+PARALLEL CODE
+
+//---------------------------------------
+To compile the code
+
+1. make sure fftw-3, blas, lapack and PETSc libraries are installed,
+and change the library path variable LIBS in makefile.mpi accordingly.
+
+2. go to directory common, and type
+	make
+
+3. go to directory fmm3d_mpi, and type
+	make
+
+4. go to directory fmm3d_mpi, and type
+	make tt0
+	make tt1
+
+//---------------------------------------
+To run the test examples:
+
+1. bad data partition
+go to fmm3d, and try the following:
+
+(1) single layer laplace kernel, low accuracy
+	mpirun -np N tt0 -options_file options_0
+
+(2) double layer stokes kernel, mid accuracy
+	mpirun -np N tt0 -options_file options_1
+
+(3) single layer navier kernel, high accuracy
+	mpirun -np N tt0 -options_file options_2
+
+2. good data partition
+go to fmm3d, and try the following:
+
+(1) single layer laplace kernel, low accuracy
+	mpirun -np N tt1 -options_file options_0
+
+(2) double layer stokes kernel, mid accuracy
+	mpirun -np N tt1 -options_file options_1
+
+(3) single layer navier kernel, high accuracy
+	mpirun -np N tt1 -options_file options_2

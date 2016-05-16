@@ -1,0 +1,61 @@
+# ----------------------------machine dependent file
+#MODE = optim
+MODE = debug
+
+ifeq ($(MODE),debug)	
+	BOPT = g_c++
+else
+	BOPT = O_c++
+endif
+include ${PETSC_DIR}/bmake/common/variables
+
+# shell
+SHELL = /bin/tcsh
+
+INCLUDES = ${PETSC_INCLUDE} -I..
+
+LIBS = -Wl,-rpath,${PETSC_DIR}/lib/lib${BOPT}/${PETSC_ARCH} ${PETSC_LIB} \
+	-lfftw3 -llapack -lblas -L/usr/local/mpich-1.2.7/lib -lmpich -lstdc++
+
+AR = ar
+ARFLAGS = -r
+
+CC  = gcc
+CXX = g++
+
+PETSC_CFLAGS 	=  -DPETSC_HAVE_X11 -DPETSC_USE_DEBUG -DPETSC_USE_LOG -DPETSC_USE_STACK
+PETSC_CXXFLAGS	=  -DPETSC_HAVE_X11 -DPETSC_USE_DEBUG -DPETSC_USE_LOG -DPETSC_USE_STACK
+ifeq ($(MODE),debug)
+	PETSC_CFLAGS 	+= -DPETSC_USE_BOPT_g
+	PETSC_CXXFLAGS	+= -DPETSC_USE_BOPT_g
+else
+	PETSC_CFLAGS 	+= -DPETSC_USE_BOPT_O
+	PETSC_CXXFLAGS	+= -DPETSC_USE_BOPT_O	
+endif
+
+# -Wall -Wno-sign-compare 
+CFLAGS   = -fPIC -g -W -Wno-sign-compare -Wno-unused-label -MMD -DEBI_${PETSC_ARCH} $(PETSC_CFLAGS)   ${INCLUDES}
+CXXFLAGS = -fPIC -g -W -Wno-sign-compare -Wno-unused-label -MMD -DEBI_${PETSC_ARCH} $(PETSC_CXXFLAGS) ${INCLUDES}
+ifeq ($(MODE),debug)
+else
+	CFLAGS 	+= -O -DNDEBUG
+	CXXFLAGS += -O -DNDEBUG
+endif
+
+LDFLAGS = ${LIBS}
+
+RANLIB = ranlib
+
+# rules
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $*.cpp
+
+#------------------------------------------------------
+tilde:
+	rm -f *~
+
+clean:
+	rm -rf *~ *.d *.o *.out *.a tt tt0 tt1
+	
+tags:
+	etags *.hpp *.cpp
